@@ -1,72 +1,43 @@
-# Mumm Baby — página de produto + checkout
+# Mumm Baby — loja de lenços umedecidos
 
-Página estilo marketplace para a oferta de lenços umedecidos Mumm Baby, com checkout em 4 etapas e rastreamento (Meta Pixel + Utmify).
+Loja da Mumm Baby feita a partir do sistema próprio da CardioMed/GlicoMax: painel `/admin` com
+pedidos, lucro, checkouts abandonados, preços e integrações; checkout Pix em 3 etapas, order bump,
+upsell, envio expresso, UTMify, Meta (Pixel + API de Conversões), Pushcut e rastreio (Rotasync).
 
-## Oferta
+**Pagamento: Pix, pela SagacePay, PixGate ou MagicPay.** No `/admin` → Integrações você escolhe
+qual gera os próximos Pix (padrão: SagacePay). O webhook dos gateways é `/api/public/pix-webhook`.
 
-| Kit | Preço | Por lenço | Frete |
-|---|---|---|---|
-| 1.000 (10 pacotes) | R$ 39,90 | 4,0 centavos | Padrão R$ 9,97 (5 dias) ou Sedex R$ 14,50 (2 dias) |
-| 2.000 (20 pacotes) — **mais escolhida** | R$ 59,90 | 3,0 centavos | Grátis (7 dias), Padrão ou Sedex |
-| 3.000 (30 pacotes) | R$ 72,90 | 2,4 centavos | Grátis (7 dias), Padrão ou Sedex |
+## Antes de publicar
 
-Os preços ficam em `js/tracking.js` (objeto `KITS`) e os fretes em `js/checkout.js` (objeto `FRETES`).
+- **Banco**: ative o Lovable Cloud **neste projeto** (banco novo, não use o da CardioMed) e rode as
+  migrações de `supabase/migrations`.
+- **Segredos** (Lovable Cloud): `ADMIN_PASSWORD` (senha do `/admin`), `RASTREIO_API_KEY` (Rotasync;
+  opcional `RASTREIO_API_URL`). As chaves da SagacePay, PixGate e MagicPay, a UTMify, o Meta e o
+  Pushcut são cadastrados no `/admin` → Integrações.
+- **Marca e empresa**: `src/lib/brand.ts` (razão social, CNPJ, e-mail, domínio, WhatsApp).
+- **Kits e preços**: `src/lib/bundles.ts` (1.000, 2.000 e 3.000 lenços) · **order bump** (+5 pacotes):
+  `src/lib/order-bump.ts` · **upsell** (+1.000 lenços, seguro, expresso): `src/lib/upsell.ts`.
+  Todos os preços também mudam no `/admin` → Preços.
+- **Frete**: opções em `src/lib/pix.functions.ts` (`FRETES`); grátis a partir de
+  `FREE_SHIPPING_MIN` em `src/lib/bundles.ts`.
+- **Textos da vitrine** (ficha, avaliações, dúvidas): `src/lib/store-content.ts`.
+- **Fotos e vídeos**: `public/img` e `public/video` (lista em `src/lib/product-images.ts`).
+- **Pixels do `<head>`**: `src/lib/pixels.ts` (Meta, TikTok, UTMify).
+- **Visual**: `src/components/mumm/mumm.css` (vitrine) e o bloco `.ck` em `src/styles.css` (checkout).
 
-## Estrutura
+## Desenvolvimento
 
+```sh
+npm i
+npm run dev
 ```
-index.html        página do produto (galeria arrastável, kits, frete, vídeos, avaliações, FAQ, barra Comprar)
-checkout.html     checkout: Kit → Dados → Entrega → Pagamento → Pedido recebido
-public/css/style.css     estilos das duas páginas
-public/js/tracking.js    Meta Pixel + Utmify, dados dos kits e função trackKit()
-public/js/produto.js     galeria, troca de kit e link para o checkout (repassa as UTMs)
-public/js/checkout.js    etapas, fretes, resumo, validação e envio do pedido para /api/pedido
-public/img/              fotos do produto e das avaliações
-public/video/            5 vídeos (mp4 com faststart) + capas
-server.js         servidor: entrega o site e as rotas /api/evento e /api/pedido
-servidor/         CAPI do Meta, Utmify, preços do servidor, pedidos e confirmarPagamento()
-.env              TOKENS (só no servidor; fora do git). Modelo: .env.example
-data/             pedidos.json (criado sozinho; fora da web e do git)
-```
-
-Para rodar com o servidor (APIs, CAPI e Utmify): `npm start` (Node 20.12+) e abra `http://localhost:3020`.
-
-Lovable / hospedagem estática: `npm run dev` (Vite) e `npm run build` (gera `dist/`). Assim o site abre,
-mas `/api/evento` e `/api/pedido` não existem: o Pixel funciona, a CAPI e o registro de pedidos não.
-Não use `npx serve`: sem o servidor, os tokens não são usados e o checkout não grava o pedido.
-
-Em produção, cadastre as variáveis do `.env` no painel do host (Render etc.) e ajuste `APP_URL`.
-
-## Rastreamento
-
-Eventos do Meta Pixel já ligados:
-
-| Evento | Quando |
-|---|---|
-| PageView | toda página (tracking.js) |
-| ViewContent | ao abrir a página do produto |
-| AddToCart | ao trocar de kit (produto e checkout) e ao aceitar o upsell |
-| InitiateCheckout | ao abrir o checkout |
-| AddPaymentInfo | ao chegar na etapa de pagamento |
-| Purchase | **não está no front**: `confirmarPagamento()` (em `servidor/pagamento.js`) envia pelo servidor quando o gateway confirmar |
-
-Cada evento acima sai do Pixel com um `event_id` e é repetido pelo servidor na API de Conversões
-(`/api/evento`) com o mesmo id, IP, navegador e cookies `_fbp`/`_fbc`: o Meta deduplica e a
-correspondência melhora. O valor dos eventos é calculado no servidor, não no navegador.
-
-Utmify: o pedido entra como `waiting_payment` ao ser criado (`/api/pedido`) e como `paid` em
-`confirmarPagamento()`, com o mesmo `orderId`.
-
-Testando em `localhost`, o script da Utmify tenta falar com `localhost:3001` e dá erro no console:
-é o comportamento deles fora de produção, no domínio real ele usa `tracking.utmify.com.br`.
-
-As UTMs da URL são repassadas do produto para o checkout e enviadas no pedido (`utms`).
-
-## O que falta
-
-1. **Gateway:** em `apiPedido` (`server.js`), criar a cobrança com `GATEWAY_SECRET_KEY` e devolver `pix_qrcode` / `pix_copia_cola`.
-2. **Webhook do gateway:** criar a rota, validar a assinatura com `GATEWAY_WEBHOOK_SECRET` e chamar `confirmarPagamento(pedidoId)`.
-3. **Cartão:** trocar os campos de cartão de `checkout.html` pelos campos tokenizados do gateway (os dados do cartão não devem passar pelo seu servidor).
-4. **Tela final do checkout:** hoje mostra "Pedido recebido" mesmo sem Pix gerado ou com erro no envio; ajustar quando o gateway estiver ligado.
-5. **Dados da loja:** pelo Decreto 7.962/2013, nome, CNPJ e contato precisam aparecer em algum lugar do site (rodapé ou checkout).
-6. **FAQ:** confirmar no rótulo do fornecedor a idade indicada para recém-nascidos (texto entre colchetes em `index.html`).
+<!-- LOVABLE:BEGIN -->
+> [!IMPORTANT]
+> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
+> published git history — force pushing, or rebasing/amending/squashing commits
+> that are already pushed — as it rewrites history on Lovable's side and the
+> user will likely lose their project history.
+>
+> Commits you push to the connected branch sync back to Lovable and show up in
+> the editor, so keep the branch in a working state.
+<!-- LOVABLE:END -->
