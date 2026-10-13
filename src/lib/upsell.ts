@@ -2,7 +2,7 @@ import type { Bundle } from "@/lib/bundles";
 
 /**
  * Oferta principal da tela pós-compra (Pix): mais 1.000 lenços com desconto, no mesmo envio.
- * Diferente do order bump (+5 pacotes). Preço e preço "de" editáveis no /admin → Preços.
+ * Diferente do order bump (porta-lenço). Preço e preço "de" editáveis no /admin → Preços.
  * O id interno da oferta continua "kit" (item físico, vai no mesmo envio e para o rastreio).
  */
 export const UPSELL_PACK = {

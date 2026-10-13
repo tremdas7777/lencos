@@ -25,21 +25,21 @@ export type BumpId = OrderBumpItem["id"];
 
 export const ORDER_BUMPS: readonly OrderBumpItem[] = [
   {
-    id: "pacotes5",
-    name: "+5 pacotes",
-    fullName: "+5 pacotes Mumm Baby (500 lenços)",
+    id: "portalenco",
+    name: "+ porta-lenço",
+    fullName: "Porta-lenço Mumm Baby (estojo com tampa)",
     gatewayName: "Pedido Mumm Baby",
-    price: 17.9,
+    price: 14.9,
     compareAt: 24.9,
-    img: "/img/10-pacotes.jpg",
-    question: "Leve mais 5 pacotes com desconto.",
-    body: "Lenço umedecido acaba rápido: troca de fralda, mãozinha, rosto, passeio. Leve mais 500 lenços agora, no mesmo envio, com o desconto que só aparece nesta tela.",
+    img: "/img/porta-lenco.svg",
+    question: "Leve um porta-lenço para a bolsa do bebê.",
+    body: "Pacote aberto na bolsa resseca e amassa. No estojo, os lenços ficam úmidos e protegidos, e saem um de cada vez com uma mão só, na hora da troca. Leve agora, no mesmo envio, com o desconto desta tela.",
     benefits: [
-      "Mais 500 lenços (5 pacotes de 100)",
-      "Mesmo envio do kit, sem frete extra",
-      "Cada pacote com tampa, não resseca",
+      "Mantém os lenços úmidos por mais tempo",
+      "Tampa que abre com uma mão só",
+      "Cabe na bolsa, sem frete extra",
     ],
-    cta: "Sim! Quero +5 pacotes por + {preco}",
+    cta: "Sim! Quero o porta-lenço por + {preco}",
   },
 ];
 

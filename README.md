@@ -15,7 +15,7 @@ qual gera os próximos Pix (padrão: SagacePay). O webhook dos gateways é `/api
   opcional `RASTREIO_API_URL`). As chaves da SagacePay, PixGate e MagicPay, a UTMify, o Meta e o
   Pushcut são cadastrados no `/admin` → Integrações.
 - **Marca e empresa**: `src/lib/brand.ts` (razão social, CNPJ, e-mail, domínio, WhatsApp).
-- **Kits e preços**: `src/lib/bundles.ts` (1.000, 2.000 e 3.000 lenços) · **order bump** (+5 pacotes):
+- **Kits e preços**: `src/lib/bundles.ts` (1.000, 2.000 e 3.000 lenços) · **order bump** (porta-lenço):
   `src/lib/order-bump.ts` · **upsell** (+1.000 lenços, seguro, expresso): `src/lib/upsell.ts`.
   Todos os preços também mudam no `/admin` → Preços.
 - **Frete**: opções em `src/lib/pix.functions.ts` (`FRETES`); grátis a partir de
