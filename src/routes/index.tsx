@@ -38,7 +38,7 @@ function Index() {
   const explore = (value = 'Todas') => { setCategory(value); document.getElementById('curiosidades')?.scrollIntoView({ behavior: 'smooth' }); };
   return <>
     <header className="site-header page-width">
-      <a href="/" aria-label="Entre Passos, início" className="brand">entre passos<em>.</em></a>
+      <span className="sr-only">Entre Passos</span>
       <nav className="hidden items-center gap-8 md:flex" aria-label="Navegação principal">
         <Button variant="link" className="nav-link nav-active p-0" onClick={() => explore()}>Curiosidades</Button>
         <Button variant="ghost" className="nav-link p-0" onClick={() => explore('História')}>História & estilo</Button>
@@ -69,7 +69,7 @@ function Index() {
         </article>)}</div>
       </section>
     </main>
-    <footer className="footer"><div className="page-width flex flex-wrap items-center justify-between gap-5"><a href="/" className="brand text-xl">entre passos<em>.</em></a><p className="text-xs text-muted-foreground">Um espaço para histórias, estilo e bons passos.</p><span className="text-[10px] text-muted-foreground">© 2026 Entre Passos</span></div></footer>
+    <footer className="footer"><div className="page-width flex flex-wrap items-center justify-between gap-5"><p className="text-xs text-muted-foreground">Um espaço para histórias, estilo e bons passos.</p><span className="text-[10px] text-muted-foreground">© 2026</span></div></footer>
     {article && <div className="article-overlay" onClick={() => setArticle(null)}><section role="dialog" aria-modal="true" aria-labelledby="article-title" className="article-dialog" onClick={e => e.stopPropagation()}><Button autoFocus variant="secondary" size="icon" className="absolute right-4 top-4" aria-label="Fechar leitura" onClick={() => setArticle(null)}><X /></Button><img src={article.image} alt="" width={1024} height={768} className="story-image mb-6" /><span className="story-category">{article.category} · {article.time} de leitura</span><h2 id="article-title" className="section-title my-4">{article.title}</h2><p className="text-sm leading-8 text-muted-foreground">{article.body}</p><Button variant="outline" className="mt-6" onClick={() => setArticle(null)}>Voltar às curiosidades <ArrowRight /></Button></section></div>}
   </>;
 }
