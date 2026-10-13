@@ -17,19 +17,22 @@ Os preços ficam em `js/tracking.js` (objeto `KITS`) e os fretes em `js/checkout
 ```
 index.html        página do produto (galeria arrastável, kits, frete, vídeos, avaliações, FAQ, barra Comprar)
 checkout.html     checkout: Kit → Dados → Entrega → Pagamento → Pedido recebido
-css/style.css     estilos das duas páginas
-js/tracking.js    Meta Pixel + Utmify, dados dos kits e função trackKit()
-js/produto.js     galeria, troca de kit e link para o checkout (repassa as UTMs)
-js/checkout.js    etapas, fretes, resumo, validação e envio do pedido para /api/pedido
-img/              fotos do produto e das avaliações
-video/            5 vídeos (mp4 com faststart) + capas
+public/css/style.css     estilos das duas páginas
+public/js/tracking.js    Meta Pixel + Utmify, dados dos kits e função trackKit()
+public/js/produto.js     galeria, troca de kit e link para o checkout (repassa as UTMs)
+public/js/checkout.js    etapas, fretes, resumo, validação e envio do pedido para /api/pedido
+public/img/              fotos do produto e das avaliações
+public/video/            5 vídeos (mp4 com faststart) + capas
 server.js         servidor: entrega o site e as rotas /api/evento e /api/pedido
 servidor/         CAPI do Meta, Utmify, preços do servidor, pedidos e confirmarPagamento()
 .env              TOKENS (só no servidor; fora do git). Modelo: .env.example
 data/             pedidos.json (criado sozinho; fora da web e do git)
 ```
 
-Para rodar: `npm start` (Node 20.12+) e abra `http://localhost:3020`.
+Para rodar com o servidor (APIs, CAPI e Utmify): `npm start` (Node 20.12+) e abra `http://localhost:3020`.
+
+Lovable / hospedagem estática: `npm run dev` (Vite) e `npm run build` (gera `dist/`). Assim o site abre,
+mas `/api/evento` e `/api/pedido` não existem: o Pixel funciona, a CAPI e o registro de pedidos não.
 Não use `npx serve`: sem o servidor, os tokens não são usados e o checkout não grava o pedido.
 
 Em produção, cadastre as variáveis do `.env` no painel do host (Render etc.) e ajuste `APP_URL`.

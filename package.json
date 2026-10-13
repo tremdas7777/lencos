@@ -4,9 +4,17 @@
   "private": true,
   "description": "Página Mumm Baby + servidor (Meta CAPI e Utmify com tokens no .env)",
   "type": "module",
-  "engines": { "node": ">=20.12" },
+  "engines": {
+    "node": ">=20.12"
+  },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev:server": "node --watch server.js"
+  },
+  "devDependencies": {
+    "vite": "^6.4.4"
   }
 }

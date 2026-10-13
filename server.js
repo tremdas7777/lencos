@@ -1,6 +1,6 @@
 // Servidor da página Mumm Baby: entrega o site e guarda os segredos (.env).
 // Rotas:
-//   GET  /, /checkout.html, /css, /js, /img, /video  -> arquivos do site
+//   GET  /, /checkout.html, /css, /js, /img, /video  -> arquivos do site (pastas em public/)
 //   POST /api/evento  -> repete no Meta (CAPI) o evento que o Pixel disparou
 //   POST /api/pedido  -> registra o pedido e avisa a Utmify (aguardando pagamento)
 import http from 'node:http';
@@ -35,7 +35,8 @@ function servirArquivo(req, res, caminhoUrl) {
   const permitido = PUBLICO.has(rel) || PASTAS_PUBLICAS.some((p) => rel.startsWith(p));
   if (!permitido || rel.includes('..')) return responder(res, 404, 'Não encontrado');
 
-  const arquivo = path.join(RAIZ, rel);
+  // HTML na raiz; css/, js/, img/ e video/ em public/ (pasta estática do Vite).
+  const arquivo = PUBLICO.has(rel) ? path.join(RAIZ, rel) : path.join(RAIZ, 'public', rel);
   fs.stat(arquivo, (err, st) => {
     if (err || !st.isFile()) return responder(res, 404, 'Não encontrado');
     const tipo = TIPOS[path.extname(arquivo).toLowerCase()] || 'application/octet-stream';
