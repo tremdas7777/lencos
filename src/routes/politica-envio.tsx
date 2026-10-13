@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyPage } from "@/components/site/PolicyPage";
-import { brl, FREE_SHIPPING_MIN } from "@/lib/bundles";
 
 export const Route = createFileRoute("/politica-envio")({
   head: () => ({
@@ -28,8 +27,8 @@ export const Route = createFileRoute("/politica-envio")({
       </p>
       <h2>Frete</h2>
       <p>
-        O frete é grátis para todo o Brasil em compras a partir de {brl(FREE_SHIPPING_MIN)} em
-        produtos. Abaixo desse valor, você escolhe no checkout entre o Frete Padrão e o Sedex, com o valor exibido antes do pagamento.
+        O frete é grátis para todo o Brasil no kit de 3.000 lenços. Nos outros kits, você escolhe no
+        checkout entre o Frete Padrão e o Sedex, com o valor exibido antes do pagamento.
       </p>
     </PolicyPage>
   ),

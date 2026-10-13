@@ -1,33 +1,25 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { applyPrices, DEFAULT_PRICES } from "@/lib/prices";
-import { bumpsTotal, ORDER_BUMPS } from "@/lib/order-bump";
+import { applyPrices } from "@/lib/prices";
 import {
-  FREE_SHIPPING_MIN,
+  FREE_SHIPPING_BUNDLE_ID,
   getBundle,
-  getUpgradeBundle,
+  getFreeShippingBundle,
   isFreeShippingEligible,
 } from "@/lib/bundles";
 
 describe("frete grátis", () => {
   afterEach(() => applyPrices(null));
 
-  it("só libera a partir de R$ 50 em produtos", () => {
-    expect(FREE_SHIPPING_MIN).toBe(50);
-    expect(isFreeShippingEligible(49.99)).toBe(false);
-    expect(isFreeShippingEligible(50)).toBe(true);
+  it("só o kit de 3.000 lenços tem frete grátis", () => {
+    expect(FREE_SHIPPING_BUNDLE_ID).toBe("3");
+    expect(isFreeShippingEligible(getBundle("1"))).toBe(false);
+    expect(isFreeShippingEligible(getBundle("2"))).toBe(false);
+    expect(isFreeShippingEligible(getBundle("3"))).toBe(true);
   });
 
-  it("o kit de 1.000 não ganha frete; o upgrade sugerido é o de 2.000, que ganha", () => {
-    applyPrices(structuredClone(DEFAULT_PRICES));
-    const entrada = getBundle("1");
-    const upgrade = getUpgradeBundle(entrada)!;
-    expect(isFreeShippingEligible(entrada.price)).toBe(false);
-    expect(upgrade.name).toBe("Kit 2.000 lenços");
-    expect(isFreeShippingEligible(upgrade.price)).toBe(true);
-  });
-
-  it("o kit de 1.000 com o order bump (+5 pacotes) libera o frete", () => {
-    applyPrices(structuredClone(DEFAULT_PRICES));
-    expect(isFreeShippingEligible(getBundle("1").price + bumpsTotal([ORDER_BUMPS[0]!.id]))).toBe(true);
+  it("a oferta de troca leva para o kit de 3.000", () => {
+    const alvo = getFreeShippingBundle();
+    expect(alvo.wipes).toBe(3000);
+    expect(isFreeShippingEligible(alvo)).toBe(true);
   });
 });

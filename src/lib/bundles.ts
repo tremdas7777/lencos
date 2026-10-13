@@ -5,18 +5,15 @@ export type BundleId = "1" | "2" | "3";
 
 export const brl = (n: number) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-/**
- * Valor mínimo (produtos + order bump, sem frete) para liberar o frete grátis.
- * Os kits de 2.000 e 3.000 já passam; o de 1.000 libera com o order bump.
- */
-export const FREE_SHIPPING_MIN = 50;
-export const FREE_SHIPPING_LABEL = `Frete grátis acima de ${brl(FREE_SHIPPING_MIN)}`;
+/** Só este kit tem frete grátis (o de 3.000 lenços). Validado também no servidor. */
+export const FREE_SHIPPING_BUNDLE_ID: BundleId = "3";
+export const FREE_SHIPPING_LABEL = "Frete grátis no kit de 3.000 lenços";
 
-export const isFreeShippingEligible = (subtotal: number) => subtotal >= FREE_SHIPPING_MIN;
+export const isFreeShippingEligible = (b: { id: string }) => b.id === FREE_SHIPPING_BUNDLE_ID;
 
-/** Selo de frete por kit: grátis quando o próprio kit já passa do mínimo. */
-export const bundleShippingLabel = (b: { price: number }) =>
-  isFreeShippingEligible(b.price) ? "Frete grátis" : FREE_SHIPPING_LABEL;
+/** Selo de frete por kit. */
+export const bundleShippingLabel = (b: { id: string }) =>
+  isFreeShippingEligible(b) ? "Frete grátis" : FREE_SHIPPING_LABEL;
 
 export type Bundle = {
   id: BundleId;
@@ -83,6 +80,9 @@ export function getBundle(id: string | undefined): Bundle {
 export function getCheckoutUrl(id: string | undefined) {
   return getBundle(id).checkoutUrl;
 }
+
+/** Kit que dá frete grátis (oferta de troca na etapa do frete). */
+export const getFreeShippingBundle = () => getBundle(FREE_SHIPPING_BUNDLE_ID);
 
 /** Próximo kit para upsell (1→2, 2→3) */
 export function getUpgradeBundle(current: Bundle): Bundle | null {

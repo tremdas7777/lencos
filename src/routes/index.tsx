@@ -7,7 +7,7 @@ import { planSearchSchema } from "@/lib/plan-search";
 
 export const TITLE = "Lenços Umedecidos Mumm Baby – 1.000 unidades por R$ 39,90";
 export const DESCRIPTION =
-  "Kit Mumm Baby com pacotes de 100 lenços. Sem álcool, com aloe vera, testado dermatologicamente. Frete grátis a partir de 2.000 lenços e 7 dias para devolver.";
+  "Kit Mumm Baby com pacotes de 100 lenços. Sem álcool, com aloe vera, testado dermatologicamente. Frete grátis no kit de 3.000 lenços e 7 dias para devolver.";
 
 export const Route = createFileRoute("/")({
   validateSearch: planSearchSchema,

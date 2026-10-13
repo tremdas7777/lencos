@@ -39,7 +39,7 @@ export function MummStore({
     onSelect(id);
   };
 
-  const free = isFreeShippingEligible(bundle.price);
+  const free = isFreeShippingEligible(bundle);
   const off = bundle.compareAtPrice
     ? Math.round((1 - bundle.price / bundle.compareAtPrice) * 100)
     : 0;
@@ -100,7 +100,7 @@ export function MummStore({
                 <span>
                   {free
                     ? "Chega em até 7 dias úteis. Ou mais rápido por Padrão ou Sedex."
-                    : "Frete grátis nos kits de 2.000 e 3.000 lenços."}
+                    : "Frete grátis no kit de 3.000 lenços."}
                 </span>
               </div>
             </div>

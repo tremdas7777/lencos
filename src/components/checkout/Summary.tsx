@@ -15,12 +15,7 @@ function Body(p: Props) {
   const total = totalOf(p);
   return (
     <>
-      <FreeShippingProgress
-        bundle={bundle}
-        subtotal={bundle.price + bumpsTotal(bumps)}
-        className="mb-5"
-        offerUpgrade={false}
-      />
+      <FreeShippingProgress bundle={bundle} className="mb-5" offerUpgrade={false} />
       <div className="space-y-2 text-[13px]">
         <div className="flex justify-between">
           <span>Produtos</span>

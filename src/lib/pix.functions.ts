@@ -1,11 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
-  brl,
   getBundle,
   isFreeShippingEligible,
   parseBundleId,
-  FREE_SHIPPING_MIN,
+  FREE_SHIPPING_LABEL,
 } from "@/lib/bundles";
 import { brand } from "@/lib/brand";
 import { bumpsTotal, getBumps } from "@/lib/order-bump";
@@ -102,13 +101,8 @@ export const createPixCharge = createServerFn({ method: "POST" })
     // Preço sempre definido no servidor (o do /admin → Preços), nunca o do cliente.
     await syncPricesFromDb();
     const bundle = getBundle(parseBundleId(data.plano) ?? "1");
-    if (
-      data.frete === "gratis" &&
-      !isFreeShippingEligible(bundle.price + bumpsTotal(chosenBumps(data).map((b) => b.id)))
-    ) {
-      throw new Error(
-        `Frete grátis disponível apenas para compras acima de ${brl(FREE_SHIPPING_MIN)}.`,
-      );
+    if (data.frete === "gratis" && !isFreeShippingEligible(bundle)) {
+      throw new Error(`${FREE_SHIPPING_LABEL}.`);
     }
     const freteOpt = getFrete(data.frete);
     const totals = checkoutTotals({

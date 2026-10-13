@@ -39,11 +39,11 @@ export const RATING = { score: "4,9", sold: "7.975" };
 export const FAQ = [
   {
     q: "Quando chega?",
-    a: "Sedex em até 2 dias úteis (R$ 14,50), Padrão em até 5 dias úteis (R$ 9,97) ou grátis em até 7 dias úteis nos kits de 2.000 e 3.000.",
+    a: "Sedex em até 2 dias úteis (R$ 14,50), Padrão em até 5 dias úteis (R$ 9,97) ou grátis em até 7 dias úteis no kit de 3.000 lenços.",
   },
   {
     q: "Como ganho frete grátis?",
-    a: "Escolhendo o kit de 2.000 ou de 3.000 lenços, ou levando o kit de 1.000 com os 5 pacotes extras do checkout.",
+    a: "Escolhendo o kit de 3.000 lenços. Nos outros kits, você escolhe Padrão ou Sedex.",
   },
   {
     q: "Pode usar em recém-nascido?",

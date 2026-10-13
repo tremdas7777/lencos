@@ -137,12 +137,9 @@ function Page() {
 
   const toggleBump = (id: BumpId, on: boolean) =>
     setBumps((cur) => (on ? [...cur.filter((b) => b !== id), id] : cur.filter((b) => b !== id)));
-  // Frete grátis só a partir de FREE_SHIPPING_MIN em produtos (validado também no servidor).
-  const subtotal = bundle.price + bumpsTotal(bumps);
-  const freeEligible = isFreeShippingEligible(subtotal);
-  const [frete, setFrete] = useState<FreteId>(() =>
-    isFreeShippingEligible(bundle.price) ? "gratis" : "padrao",
-  );
+  // Frete grátis só no kit de 3.000 lenços (validado também no servidor).
+  const freeEligible = isFreeShippingEligible(bundle);
+  const [frete, setFrete] = useState<FreteId>(() => (freeEligible ? "gratis" : "padrao"));
   const wasEligible = useRef(freeEligible);
   useEffect(() => {
     if (!freeEligible && frete === "gratis") setFrete("padrao");
@@ -418,7 +415,7 @@ function Page() {
             onChange={(e) => setAddr({ ...addr, complemento: e.target.value })}
           />
           <p className="pt-2 text-base font-medium">Escolha o frete:</p>
-          <FreeShippingProgress bundle={bundle} subtotal={subtotal} />
+          <FreeShippingProgress bundle={bundle} />
           {FRETES.filter((f) => f.id !== "gratis" || freeEligible).map(
             ({ id: v, name: t, eta: d, price }) => {
               const p = price ? brl(price) : "Grátis";
