@@ -133,24 +133,27 @@ export async function reportPendingToUtmify(o: {
     amountCents: o.amountCents,
     orderId: o.id,
   });
-  const r = await sendUtmifyOrder({
-    orderId: o.id,
-    status: "waiting_payment",
-    // A UTMify exige a MESMA data de criação no envio pendente e no pago.
-    createdAt: o.createdAt,
-    approvedAt: null,
-    customer: {
-      name: o.customer.name,
-      email: o.customer.email,
-      phone: o.customer.phone,
-      document: o.customer.cpf,
-      ip: o.ip ?? null,
-    },
-    product: { id: o.bundleId, name: `${brand.productName} - ${o.bundleName}` },
-    amountCents: o.amountCents,
-    utm: o.utm ?? {},
-    paymentMethod: o.customer.method === "card" ? "credit_card" : "pix",
-  });
+  // Pix pós-compra (upsell/expresso) não vira pedido na UTMify: quando pago, soma no pedido original.
+  const r: { ok: boolean; error?: string; skipped?: string } = o.customer.upsellOf
+    ? { ok: true, skipped: "pós-compra: soma no pedido original quando pago" }
+    : await sendUtmifyOrder({
+        orderId: o.id,
+        status: "waiting_payment",
+        // A UTMify exige a MESMA data de criação no envio pendente e no pago.
+        createdAt: o.createdAt,
+        approvedAt: null,
+        customer: {
+          name: o.customer.name,
+          email: o.customer.email,
+          phone: o.customer.phone,
+          document: o.customer.cpf,
+          ip: o.ip ?? null,
+        },
+        product: { id: o.bundleId, name: `${brand.productName} - ${o.bundleName}` },
+        amountCents: o.amountCents,
+        utm: o.utm ?? {},
+        paymentMethod: o.customer.method === "card" ? "credit_card" : "pix",
+      });
   if (!r.ok) console.error("UTMify pending failed", o.id, r.error);
   // Guarda a resposta no pedido para aparecer no admin (seção Técnico).
   try {
@@ -171,6 +174,40 @@ export async function reportPendingToUtmify(o: {
 }
 
 export { isPaidStatus };
+
+/**
+ * Pós-compra pago (upsell/expresso): reenvia o pedido ORIGINAL para a UTMify, com o mesmo orderId e
+ * o valor somado (pedido + ofertas pós-compra pagas). Assim a UTMify conta uma venda só por cliente.
+ */
+async function reportUpsellIntoParent(parentId: string) {
+  const db = await admin();
+  const { data: parent } = await db.from("pix_orders").select("*").eq("id", parentId).maybeSingle();
+  if (!parent) return { ok: false, error: "Pedido original não encontrado" };
+  const { data: extras } = await db
+    .from("pix_orders")
+    .select("amount_cents, bundle_name")
+    .eq("customer->>upsellOf", parentId)
+    .eq("status", "paid");
+  const paidExtras = (extras ?? []) as { amount_cents: number; bundle_name: string }[];
+  const total = parent.amount_cents + paidExtras.reduce((s, x) => s + x.amount_cents, 0);
+  const pc = parent.customer as StoredCustomer;
+  const extraNames = paidExtras.map((x) => x.bundle_name.replace(/^Upsell: /, "")).join(" + ");
+  return sendUtmifyOrder({
+    orderId: parent.id,
+    status: "paid",
+    // Mesma data de criação do pedido original (a UTMify exige para atualizar o mesmo pedido).
+    createdAt: new Date(parent.created_at).getTime(),
+    approvedAt: parent.paid_reported_at ? new Date(parent.paid_reported_at).getTime() : Date.now(),
+    customer: { name: pc.name, email: pc.email, phone: pc.phone, document: pc.cpf, ip: parent.ip },
+    product: {
+      id: parent.bundle_id,
+      name: `${brand.productName} - ${parent.bundle_name}${extraNames ? ` + ${extraNames}` : ""}`,
+    },
+    amountCents: total,
+    utm: parent.utm ?? {},
+    paymentMethod: pc.method === "card" ? "credit_card" : "pix",
+  });
+}
 
 /** Consulta o status real no gateway em que o Pix foi gerado (SagacePay, PixGate ou MagicPay). */
 export async function fetchGatewayStatus(id: string): Promise<{ status: string; amount: number }> {
@@ -226,6 +263,7 @@ export async function reportPaidOnce(
     const amount =
       Number.isFinite(gatewayAmount) && gatewayAmount > 0 ? gatewayAmount : o.amount_cents;
     const c = o.customer as StoredCustomer;
+    const isUpsell = !!c.upsellOf;
     const productName = `${brand.productName} - ${o.bundle_name}`;
     // Canal que já confirmou o recebimento numa tentativa anterior não recebe de novo (sem duplicar venda).
     const done = (o.report_result ?? {}) as {
@@ -243,42 +281,46 @@ export async function reportPaidOnce(
         });
     const utmify = done.utmify?.ok
       ? done.utmify
-      : await sendUtmifyOrder({
-          orderId: id,
-          status: "paid",
-          createdAt: new Date(o.created_at).getTime(),
-          approvedAt: Date.now(),
-          customer: { name: c.name, email: c.email, phone: c.phone, document: c.cpf, ip: o.ip },
-          product: { id: o.bundle_id, name: productName },
-          amountCents: amount,
-          utm: o.utm ?? {},
-          paymentMethod: c.method === "card" ? "credit_card" : "pix",
-        });
+      : isUpsell
+        ? await reportUpsellIntoParent(c.upsellOf!)
+        : await sendUtmifyOrder({
+            orderId: id,
+            status: "paid",
+            createdAt: new Date(o.created_at).getTime(),
+            approvedAt: Date.now(),
+            customer: { name: c.name, email: c.email, phone: c.phone, document: c.cpf, ip: o.ip },
+            product: { id: o.bundle_id, name: productName },
+            amountCents: amount,
+            utm: o.utm ?? {},
+            paymentMethod: c.method === "card" ? "credit_card" : "pix",
+          });
     const meta = done.meta?.ok
       ? done.meta
-      : await sendCapiEvent({
-          eventName: "Purchase",
-          eventId: `purchase-${id}`,
-          url: extra?.url,
-          user: {
-            email: c.email,
-            phone: c.phone,
-            name: c.name,
-            cpf: c.cpf,
-            fbp: extra?.fbp ?? o.fbp ?? null,
-            fbc: extra?.fbc ?? o.fbc ?? null,
-            ip: extra?.ip ?? o.ip ?? null,
-            ua: extra?.ua ?? o.ua ?? null,
-          },
-          customData: {
-            value: amount / 100,
-            currency: "BRL",
-            content_name: productName,
-            content_ids: [o.bundle_id],
-            content_type: "product",
-            order_id: id,
-          },
-        });
+      : isUpsell
+        ? { ok: true, skipped: "pós-compra: não é uma compra nova no Meta" }
+        : await sendCapiEvent({
+            eventName: "Purchase",
+            eventId: `purchase-${id}`,
+            url: extra?.url,
+            user: {
+              email: c.email,
+              phone: c.phone,
+              name: c.name,
+              cpf: c.cpf,
+              fbp: extra?.fbp ?? o.fbp ?? null,
+              fbc: extra?.fbc ?? o.fbc ?? null,
+              ip: extra?.ip ?? o.ip ?? null,
+              ua: extra?.ua ?? o.ua ?? null,
+            },
+            customData: {
+              value: amount / 100,
+              currency: "BRL",
+              content_name: productName,
+              content_ids: [o.bundle_id],
+              content_type: "product",
+              order_id: id,
+            },
+          });
     // Rastreio (Rotasync): pedido principal e upsell com kit extra viram envios próprios (o pedido
     // principal já foi repassado quando o upsell é pago). Seguro e expresso não têm produto físico.
     // Se a API já respondeu de forma definitiva (sucesso, 422, 401, 402, 403), não reenvia.
@@ -287,7 +329,6 @@ export async function reportPaidOnce(
       !!prev && (prev.ok || [401, 402, 403, 413, 415, 422].includes(prev.status ?? 0));
     await syncPricesFromDb().catch(() => undefined);
     const bundle = getBundle(o.bundle_id);
-    const isUpsell = !!c.upsellOf;
     const shipsKit = !isUpsell || (c.upsellItems ?? ["kit"]).includes("kit");
     const kitTotal = isUpsell ? upsellPrice(bundle) : bundle.price;
     const rastro = rastroDone

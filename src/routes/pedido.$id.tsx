@@ -83,7 +83,8 @@ function Page() {
     const value = (session?.amount ?? 0) / 100;
     const w = window as DataLayerWindow;
     try {
-      metaPurchaseBrowser(id, value, session?.bundleName);
+      // Pós-compra (upsell/expresso) soma na venda original: não é uma compra nova no Meta.
+      if (!session?.isUpsell) metaPurchaseBrowser(id, value, session?.bundleName);
       w.ttq?.track("CompletePayment", { value, currency: "BRL" });
       w.dataLayer?.push({ event: "purchase", currency: "BRL", value });
     } catch {
