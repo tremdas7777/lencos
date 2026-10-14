@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   availableBundles,
-  bundleShippingLabel,
   brl,
   centsPerWipe,
   getBundle,
@@ -12,14 +11,12 @@ import {
 import { brand } from "@/lib/brand";
 import { GALLERY, VIDEOS } from "@/lib/product-images";
 import { FAQ, RATING, REVIEWS, SPECS } from "@/lib/store-content";
-import { FRETES } from "@/lib/pix.functions";
 import { metaTrack } from "@/lib/meta-pixel";
 import { trackCheckoutClick } from "@/lib/analytics";
 
 const TEAL = "#0B5957";
-const SHIP_LABEL = { gratis: "até 7 dias úteis", padrao: "Padrão · 5 dias", express: "Sedex · 2 dias" };
 
-/** Página do produto: galeria, kits, frete, vídeos, avaliações, dúvidas e barra Comprar. */
+/** Página do produto: galeria, kits, vídeos, avaliações, dúvidas e barra Comprar. */
 export function MummStore({
   selected,
   onSelect,
@@ -92,26 +89,7 @@ export function MummStore({
             </div>
           </section>
 
-          <section className="card ship">
-            <div className="ship-head">
-              <TruckIcon />
-              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <strong>{free ? "Frete grátis" : `Frete a partir de ${brl(FRETES[1].price)}`}</strong>
-                <span>
-                  {free
-                    ? "Chega em até 7 dias úteis. Ou mais rápido por Padrão ou Sedex."
-                    : "Frete grátis no kit de 3.000 lenços."}
-                </span>
-              </div>
-            </div>
-            <div className="ship-opts">
-              {FRETES.map((f) => (
-                <div key={f.id} className={f.id === "gratis" && !free ? "dim" : undefined}>
-                  <strong>{f.price ? brl(f.price) : "Grátis"}</strong>
-                  <span>{SHIP_LABEL[f.id]}</span>
-                </div>
-              ))}
-            </div>
+          <section className="card">
             <div className="perks">
               {["7 dias para devolver", "Pagamento seguro", "Pix com aprovação na hora", "Rastreio do pedido"].map(
                 (t) => (
@@ -207,7 +185,7 @@ export function MummStore({
           >
             <strong>Comprar</strong>
             <span>
-              {brl(bundle.price)} · {bundleShippingLabel(bundle)}
+              {brl(bundle.price)} {free ? "· Frete grátis" : "+ frete"}
             </span>
           </Link>
         </div>
@@ -347,27 +325,6 @@ function Chevron({ d }: { d: string }) {
       aria-hidden="true"
     >
       <path d={d} />
-    </svg>
-  );
-}
-
-function TruckIcon() {
-  return (
-    <svg
-      width="22"
-      height="22"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={TEAL}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      style={{ flex: "0 0 22px", marginTop: 1 }}
-    >
-      <path d="M2 7h11v9H2zM13 10h4l4 3v3h-8z" />
-      <circle cx="6" cy="18" r="1.6" />
-      <circle cx="17" cy="18" r="1.6" />
     </svg>
   );
 }

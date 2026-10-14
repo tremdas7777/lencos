@@ -11,10 +11,6 @@ export const FREE_SHIPPING_LABEL = "Frete grátis no kit de 3.000 lenços";
 
 export const isFreeShippingEligible = (b: { id: string }) => b.id === FREE_SHIPPING_BUNDLE_ID;
 
-/** Selo de frete por kit. */
-export const bundleShippingLabel = (b: { id: string }) =>
-  isFreeShippingEligible(b) ? "Frete grátis" : FREE_SHIPPING_LABEL;
-
 export type Bundle = {
   id: BundleId;
   name: string;
