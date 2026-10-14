@@ -33,7 +33,7 @@ export const SHIPPING_INSURANCE = {
   fullName: "Seguro de entrega — reenvio ou reembolso",
   /** Nome enviado ao gateway. */
   gatewayName: "Seguro de entrega",
-  price: 7.9,
+  price: 14.9,
 };
 
 /** Envio expresso: página própria depois da tela de ofertas (cobrança separada). */
