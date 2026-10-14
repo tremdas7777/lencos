@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { brand } from "@/lib/brand";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { getMetaConfig, saveMetaConfig, sendCapiEvent } from "./meta.server";
+import { deleteMetaConfig, getMetaConfig, saveMetaConfig, sendCapiEvent } from "./meta.server";
 
 function assertAdmin(password: string) {
   if (password !== process.env["ADMIN_PASSWORD"]) throw new Error("Não autorizado");
@@ -48,6 +48,14 @@ export const saveMetaAdmin = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     assertAdmin(data.password);
     await saveMetaConfig({ pixelId: data.pixelId, accessToken: data.accessToken || undefined, testCode: data.testCode });
+    return { ok: true };
+  });
+
+export const deleteMetaAdmin = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ password: z.string().min(1).max(200) }).parse(d))
+  .handler(async ({ data }) => {
+    assertAdmin(data.password);
+    await deleteMetaConfig();
     return { ok: true };
   });
 

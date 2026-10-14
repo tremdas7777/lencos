@@ -29,6 +29,13 @@ export async function saveMetaConfig(c: { pixelId: string; accessToken?: string;
   if (error) throw new Error(error.message);
 }
 
+/** Remove o pixel, o token e o código de teste: a loja para de enviar ao Meta. */
+export async function deleteMetaConfig() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin.from("private_settings").delete().in("key", [...KEYS]);
+  if (error) throw new Error(error.message);
+}
+
 const sha = (v: string) => createHash("sha256").update(v.trim().toLowerCase()).digest("hex");
 
 export type CapiUser = {

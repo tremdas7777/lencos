@@ -4,7 +4,7 @@ import { Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { getMetaAdmin, saveMetaAdmin, testMetaAdmin } from "@/lib/meta.functions";
+import { deleteMetaAdmin, getMetaAdmin, saveMetaAdmin, testMetaAdmin } from "@/lib/meta.functions";
 
 export interface MetaPixelCardProps {
   password: string;
@@ -15,6 +15,7 @@ export function MetaPixelCard({ password }: MetaPixelCardProps) {
   const loadFn = useServerFn(getMetaAdmin);
   const saveFn = useServerFn(saveMetaAdmin);
   const testFn = useServerFn(testMetaAdmin);
+  const deleteFn = useServerFn(deleteMetaAdmin);
   const [pixelId, setPixelId] = useState("");
   const [token, setToken] = useState("");
   const [testCode, setTestCode] = useState("");
@@ -44,6 +45,24 @@ export function MetaPixelCard({ password }: MetaPixelCardProps) {
       setMsg("Salvo. O pixel já vale para todas as páginas.");
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Erro ao salvar.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async () => {
+    if (!window.confirm("Remover o pixel e o token do Meta? A loja para de enviar eventos ao Meta.")) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      await deleteFn({ data: { password } });
+      setPixelId("");
+      setToken("");
+      setTestCode("");
+      setTokenHint("");
+      setMsg("Removido. A loja não envia mais eventos ao Meta.");
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Erro ao remover.");
     } finally {
       setBusy(false);
     }
@@ -89,6 +108,7 @@ export function MetaPixelCard({ password }: MetaPixelCardProps) {
         <div className="md:col-span-3 flex flex-wrap items-center gap-3">
           <Button type="submit" size="sm" disabled={busy || !pixelId}>Salvar</Button>
           <Button type="button" size="sm" variant="outline" disabled={busy || !tokenHint} onClick={test}>Enviar teste</Button>
+          <Button type="button" size="sm" variant="outline" disabled={busy || (!pixelId && !tokenHint)} onClick={remove}>Remover pixel</Button>
           {msg && <span className="text-xs text-foreground">{msg}</span>}
         </div>
       </form>
