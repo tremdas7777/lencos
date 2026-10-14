@@ -13,12 +13,9 @@ export type OrderBumpItem = {
   /** Preço "de" (riscado). Sem ele, a oferta mostra só o preço. */
   compareAt?: number;
   img: string;
-  /** Texto de venda exibido no checkout. */
-  question: string;
-  body: string;
-  benefits: string[];
-  /** Texto do checkbox; `{preco}` vira o preço formatado. */
-  cta: string;
+  /** Chamada curta (uma linha) e o motivo, exibidos no checkout. */
+  title: string;
+  subtitle: string;
 };
 
 export type BumpId = OrderBumpItem["id"];
@@ -32,14 +29,8 @@ export const ORDER_BUMPS: readonly OrderBumpItem[] = [
     price: 14.9,
     compareAt: 24.9,
     img: "/img/porta-lenco.svg",
-    question: "Leve um porta-lenço para a bolsa do bebê.",
-    body: "Pacote aberto na bolsa resseca e amassa. No estojo, os lenços ficam úmidos e protegidos, e saem um de cada vez com uma mão só, na hora da troca. Leve agora, no mesmo envio, com o desconto desta tela.",
-    benefits: [
-      "Mantém os lenços úmidos por mais tempo",
-      "Tampa que abre com uma mão só",
-      "Cabe na bolsa, sem frete extra",
-    ],
-    cta: "Sim! Quero o porta-lenço por + {preco}",
+    title: "Leve também o porta-lenço",
+    subtitle: "Lenços úmidos na bolsa do bebê. Vai no mesmo envio.",
   },
 ];
 
