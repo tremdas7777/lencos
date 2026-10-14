@@ -83,7 +83,6 @@ export function MummStore({
                   {b.badge && <span className="badge">{b.badge}</span>}
                   <strong>{b.wipes.toLocaleString("pt-BR")}</strong>
                   <span className="kp">{brl(b.price)}</span>
-                  <small>{centsPerWipe(b)} ¢/lenço</small>
                 </button>
               ))}
             </div>
