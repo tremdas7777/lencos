@@ -7,7 +7,7 @@ import type { Bundle } from "@/lib/bundles";
  */
 export const UPSELL_PACK = {
   name: "+1.000 lenços",
-  fullName: "+1.000 lenços Mumm Baby (10 pacotes)",
+  fullName: "1.000 lenços Mumm Baby (10 pacotes)",
   /** Preço cobrado. */
   price: 29.9,
   /** Preço de tabela (riscado). */

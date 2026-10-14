@@ -25,7 +25,7 @@ export const Route = createFileRoute("/upsell/$id")({
 });
 
 /**
- * Ofertas pós-compra: impressora de resultados e seguro de entrega.
+ * Ofertas pós-compra: +1.000 lenços e seguro de entrega.
  * O cliente marca uma, as duas ou nenhuma; o que marcou vai numa cobrança só. Depois (comprando ou
  * não) vem a página do envio expresso — ver /expresso:
  * cobrado num Pix separado.
