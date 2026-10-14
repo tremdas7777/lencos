@@ -5,7 +5,6 @@ import {
   brl,
   centsPerWipe,
   getBundle,
-  isFreeShippingEligible,
   type BundleId,
 } from "@/lib/bundles";
 import { brand } from "@/lib/brand";
@@ -36,7 +35,6 @@ export function MummStore({
     onSelect(id);
   };
 
-  const free = isFreeShippingEligible(bundle);
   const off = bundle.compareAtPrice
     ? Math.round((1 - bundle.price / bundle.compareAtPrice) * 100)
     : 0;
@@ -182,10 +180,7 @@ export function MummStore({
               })
             }
           >
-            <strong>Comprar</strong>
-            <span>
-              {brl(bundle.price)} {free ? "· Frete grátis" : "+ frete"}
-            </span>
+            <strong>Comprar Agora</strong>
           </Link>
         </div>
       </div>
