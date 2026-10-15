@@ -8,10 +8,10 @@ import type { Bundle } from "@/lib/bundles";
 export const UPSELL_PACK = {
   name: "+1.000 lenços",
   fullName: "1.000 lenços Mumm Baby (10 pacotes)",
-  /** Preço cobrado. */
-  price: 29.9,
-  /** Preço de tabela (riscado). */
-  listPrice: 39.9,
+  /** Preço cobrado (abaixo do kit de 1.000 na loja, para valer a pena na hora). */
+  price: 19.9,
+  /** Preço de tabela (riscado): o kit de 1.000 na loja. */
+  listPrice: 29.9,
 };
 
 /** Desconto da oferta em relação ao preço de tabela (0 a 1). */
