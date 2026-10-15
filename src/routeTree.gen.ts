@@ -25,6 +25,7 @@ import { Route as ExpressoIdRouteImport } from './routes/expresso.$id'
 import { Route as ObrigadoIdRouteImport } from './routes/obrigado.$id'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as UpsellIdRouteImport } from './routes/upsell.$id'
+import { Route as ApiPublicLogoRouteImport } from './routes/api/public/logo'
 import { Route as ApiPublicPixWebhookRouteImport } from './routes/api/public/pix-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -107,6 +108,11 @@ const UpsellIdRoute = UpsellIdRouteImport.update({
   path: '/upsell/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicLogoRoute = ApiPublicLogoRouteImport.update({
+  id: '/api/public/logo',
+  path: '/api/public/logo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPixWebhookRoute = ApiPublicPixWebhookRouteImport.update({
   id: '/api/public/pix-webhook',
   path: '/api/public/pix-webhook',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/logo': typeof ApiPublicLogoRoute
   '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/logo': typeof ApiPublicLogoRoute
   '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
 }
 export interface FileRoutesById {
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/upsell/$id': typeof UpsellIdRoute
+  '/api/public/logo': typeof ApiPublicLogoRoute
   '/api/public/pix-webhook': typeof ApiPublicPixWebhookRoute
 }
 export interface FileRouteTypes {
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/upsell/$id'
+    | '/api/public/logo'
     | '/api/public/pix-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/upsell/$id'
+    | '/api/public/logo'
     | '/api/public/pix-webhook'
   id:
     | '__root__'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/upsell/$id'
+    | '/api/public/logo'
     | '/api/public/pix-webhook'
   fileRoutesById: FileRoutesById
 }
@@ -248,6 +260,7 @@ export interface RootRouteChildren {
   ObrigadoIdRoute: typeof ObrigadoIdRoute
   PedidoIdRoute: typeof PedidoIdRoute
   UpsellIdRoute: typeof UpsellIdRoute
+  ApiPublicLogoRoute: typeof ApiPublicLogoRoute
   ApiPublicPixWebhookRoute: typeof ApiPublicPixWebhookRoute
 }
 
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpsellIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/logo': {
+      id: '/api/public/logo'
+      path: '/api/public/logo'
+      fullPath: '/api/public/logo'
+      preLoaderRoute: typeof ApiPublicLogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pix-webhook': {
       id: '/api/public/pix-webhook'
       path: '/api/public/pix-webhook'
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   ObrigadoIdRoute: ObrigadoIdRoute,
   PedidoIdRoute: PedidoIdRoute,
   UpsellIdRoute: UpsellIdRoute,
+  ApiPublicLogoRoute: ApiPublicLogoRoute,
   ApiPublicPixWebhookRoute: ApiPublicPixWebhookRoute,
 }
 export const routeTree = rootRouteImport

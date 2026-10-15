@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { brand } from "@/lib/brand";
 import { FREE_SHIPPING_LABEL } from "@/lib/bundles";
+import { BrandLogo, useLogo } from "@/components/site/BrandLogo";
 
 /** Faixa do topo + cabeçalho da vitrine. */
 export function MummHeader() {
@@ -12,7 +13,7 @@ export function MummHeader() {
       <header className="mb-hdr">
         <div className="wrap">
           <Link to="/" className="mb-logo" aria-label={`${brand.name}, início`}>
-            {brand.name}
+            <BrandLogo className="text-[22px] !text-inherit" height={40} maxWidth={200} />
           </Link>
           <nav aria-label="Atalhos">
             <a href="/#duvidas">Dúvidas</a>
@@ -26,6 +27,7 @@ export function MummHeader() {
 }
 
 export function MummFooter() {
+  const logo = useLogo();
   const { legalName, cnpj } = brand.company;
   const wa = brand.whatsapp.phoneE164;
   return (
@@ -33,8 +35,8 @@ export function MummFooter() {
       <div className="wrap">
         <div className="cols">
           <div>
-            <Link to="/" className="mb-logo">
-              {brand.name}
+            <Link to="/" className={logo ? "mb-logo-chip" : "mb-logo"}>
+              {logo ? <BrandLogo height={36} maxWidth={180} /> : brand.name}
             </Link>
             <span>{brand.tagline}.</span>
           </div>

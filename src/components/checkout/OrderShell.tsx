@@ -7,7 +7,7 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="ck flex min-h-screen flex-col bg-white text-foreground">
       <header className="flex justify-center py-6 md:py-8">
-        <BrandLogo className="text-4xl md:text-5xl" />
+        <BrandLogo className="text-4xl md:text-5xl" height={56} maxWidth={280} />
       </header>
       <main className="flex-1 pt-4">{children}</main>
       <CheckoutFooter />

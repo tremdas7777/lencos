@@ -9,6 +9,7 @@ import { PixGatewayCard } from "@/components/admin/PixGatewayCard";
 import { PricesTab } from "@/components/admin/PricesTab";
 import { PushcutCard } from "@/components/admin/PushcutCard";
 import { MetaPixelCard } from "@/components/admin/MetaPixelCard";
+import { LogoCard } from "@/components/admin/LogoCard";
 import { OrdersTab } from "@/components/admin/OrdersTab";
 import { AbandonedTab } from "@/components/admin/AbandonedTab";
 import { ProfitTab } from "@/components/admin/ProfitTab";
@@ -298,6 +299,7 @@ function AdminPage() {
                   </Button>
                 </div>
               </Card>
+              <LogoCard password={password} />
               <PixGatewayCard password={password} />
               <UtmifyCard password={password} />
               <PushcutCard password={password} />

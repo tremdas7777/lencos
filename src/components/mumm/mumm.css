@@ -47,6 +47,9 @@
 .mb-ft a { color: #c9d4d3; text-decoration: none; }
 .mb-ft a:hover { color: #fff; }
 .mb-ft .mb-logo { color: #fff !important; }
+/* Logo em imagem no rodapé escuro: num fundo branco, para qualquer cor de logo aparecer. */
+.mb-logo-chip { display: inline-flex; align-self: flex-start; background: #fff; border-radius: 12px; padding: 8px 14px; }
+.mb-logo img { display: block; }
 .mb-ft .legal { border-top: 1px solid #ffffff1f; padding-top: 16px; font-size: 12px; line-height: 1.6; }
 @media (max-width: 640px) {
   .mb-hdr nav { display: none; }

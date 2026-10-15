@@ -543,7 +543,7 @@ function Page() {
   return (
     <div className="ck flex min-h-screen flex-col text-foreground">
       <header className="flex justify-center py-6 md:py-10">
-        <BrandLogo className="text-4xl md:text-5xl" />
+        <BrandLogo className="text-4xl md:text-5xl" height={56} maxWidth={280} />
       </header>
       <SummaryMobile bundle={bundle} frete={freteValue} discount={discount} bumps={bumps} />
       <main className="mx-auto grid w-full max-w-[1160px] gap-4 px-3 pb-24 pt-2 md:px-4 lg:grid-cols-3 lg:gap-4">

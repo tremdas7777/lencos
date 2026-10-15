@@ -18,6 +18,7 @@ import { brand } from "@/lib/brand";
 import { FREE_SHIPPING_LABEL } from "@/lib/bundles";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { getPrices } from "@/lib/prices.functions";
+import { getLogoMeta } from "@/lib/logo.functions";
 import { applyPrices } from "@/lib/prices";
 
 import appCss from "../styles.css?url";
@@ -156,7 +157,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   // Preços do /admin → Preços (só exibição; o servidor recalcula antes de cobrar). Se o banco
   // falhar, a loja abre com os preços de fábrica (e a cobrança não sai até o banco voltar).
-  loader: () => getPrices().catch(() => null),
+  // Logo do /admin: só a versão e a proporção (a imagem vem de /api/public/logo).
+  loader: async () => {
+    const [prices, logo] = await Promise.all([
+      getPrices().catch(() => null),
+      getLogoMeta().catch(() => null),
+    ]);
+    return { prices, logo };
+  },
   staleTime: 60_000,
   // Não recarrega os preços a cada navegação dentro do site (ex.: trocar de kit no checkout):
   // a recarga podia recriar a página e apagar o que o cliente digitou. O servidor sempre
@@ -195,7 +203,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  applyPrices(Route.useLoaderData());
+  applyPrices(Route.useLoaderData().prices);
   useAntiCopy();
   useTrackPageView();
   useMetaPixel();
