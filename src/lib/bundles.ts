@@ -52,9 +52,9 @@ const kit = (id: BundleId, packs: number, price: number, compareAtPrice?: number
 };
 
 export const bundles: Bundle[] = [
-  kit("1", 10, 39.9),
-  { ...kit("2", 20, 59.9, 79.8), featured: true, badge: "Mais escolhida" },
-  kit("3", 30, 72.9, 119.7),
+  kit("1", 10, 29.9),
+  { ...kit("2", 20, 49.9, 79.8), featured: true, badge: "Mais escolhida" },
+  kit("3", 30, 62.9, 119.7),
 ];
 
 /** Kits visíveis na loja. */
